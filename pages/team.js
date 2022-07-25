@@ -1,35 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Button } from 'react-bootstrap';
 import { getPlayers } from '../api/playerData';
 import { useAuth } from '../utils/context/authContext';
 import PlayerCard from '../components/PlayerCard';
 
-function Home() {
+export default function Team() {
   const [players, setPlayers] = useState([]);
+
   const { user } = useAuth();
 
-  const getAllThePlayers = () => {
-    getPlayers(user.uid).then(setPlayers);
+  const getAllPlayers = () => {
+    getPlayers().then(setPlayers);
   };
 
   useEffect(() => {
-    getAllThePlayers();
+    getAllPlayers();
+  }, [user]);
+
+  useEffect(() => {
+    getPlayers().then(setPlayers);
   }, []);
+  console.warn(user.uid);
 
   return (
     <div className="text-center my-4">
-      <Link href="/teamStuff/new" passHref>
-        <Button>Add A Player</Button>
-      </Link>
       <div className="d-flex flex-wrap">
+        <h1>Team</h1>
         {players.map((player) => (
-          <PlayerCard key={player.firebaseKey} playerObj={player} onUpdate={getAllThePlayers} />
+          <PlayerCard key={player.firebaseKey} playerObj={player} onUpdate={getAllPlayers} />
         ))}
       </div>
 
     </div>
   );
 }
-
-export default Home;
