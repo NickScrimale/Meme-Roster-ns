@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Button, FloatingLabel, Form } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { createPlayer, updatePlayer } from '../../api/playerData';
+import { createPlayer, getPlayers, updatePlayer } from '../../api/playerData';
 import { useAuth } from '../../utils/context/authContext';
 
 const initialState = {
@@ -13,10 +13,13 @@ const initialState = {
 
 function PlayerForm({ obj }) {
   const [formInput, setFormInput] = useState(initialState);
+  const [setPlayers] = useState([]);
   const router = useRouter();
   const { user } = useAuth();
 
   useEffect(() => {
+    getPlayers(user.uid).then(setPlayers);
+
     if (obj.firebaseKey) setFormInput(obj);
   }, [obj, user]);
 
@@ -44,38 +47,14 @@ function PlayerForm({ obj }) {
   return (
     <Form onSubmit={handleSubmit}>
       <h2 className="text-white mt-5">{obj.firebaseKey ? 'Update' : 'Create'} Player</h2>
-
       <FloatingLabel controlId="floatingInput1" label="Name" className="mb-3">
-        <Form.Control
-          type="text"
-          placeholder="Enter Name"
-          name="name"
-          value={formInput.name}
-          onChange={handleChange}
-          required
-        />
+        <Form.Control type="text" placeholder="Enter Name" name="name" value={formInput.name} onChange={handleChange} required />
       </FloatingLabel>
-
-      <FloatingLabel controlId="floatingInput2" label="Image URL" className="mb-3">
-        <Form.Control
-          type="text"
-          placeholder="Enter Image URL"
-          name="image"
-          value={formInput.image}
-          onChange={handleChange}
-          required
-        />
+      <FloatingLabel controlId="floatingInput2" label="Player Image" className="mb-3">
+        <Form.Control type="url" placeholder="Enter an image url" name="image" value={formInput.image} onChange={handleChange} required />
       </FloatingLabel>
-
-      <FloatingLabel controlId="floatingInput3" label="Position" className="mb-3">
-        <Form.Control
-          type="text"
-          placeholder="Enter Position"
-          name="position"
-          value={formInput.position}
-          onChange={handleChange}
-          required
-        />
+      <FloatingLabel controlId="floatingInput2" label="Player Position" className="mb-3">
+        <Form.Control type="text" placeholder="Enter position" name="position" value={formInput.position} onChange={handleChange} required />
       </FloatingLabel>
 
       <Button type="submit">{obj.firebaseKey ? 'Update' : 'Create'} Player</Button>
